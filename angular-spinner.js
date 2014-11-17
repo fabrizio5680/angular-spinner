@@ -32,20 +32,16 @@
 					link: function postLink(scope, element) {
 						var events = [];
 
-						events.push(scope.$on('us-spinner:spin'), scope.disableButton);
-						events.push(scope.$on('us-spinner:stop'), scope.enableButton);
-
-						scope.enableButton = function () {
-							element.attr('disabled', false);
-						};
-
-						scope.disableButton = function () {
+						scope.$on('us-spinner:spin', function (event, key) {
 							element.attr('disabled', true);
-							console.log('disabled ', element[0].innerText);
-						};
+						});
 
+						scope.$on('us-spinner:stop', function (event, key) {
+							element.attr('disabled', false);
+						});
 
 						scope.$on('$destroy', function () {
+							element.attr('disabled', false);
 							angular.forEach(events, function (ev) {
 								if (ev) {
 									ev();

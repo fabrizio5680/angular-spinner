@@ -26,6 +26,36 @@
 				return config;
 			}])
 
+			.directive('btn', function () {
+				return {
+					restrict: 'C',
+					link: function postLink(scope, element) {
+						var events = [];
+
+						events.push(scope.$on('us-spinner:spin'), scope.disableButton);
+						events.push(scope.$on('us-spinner:stop'), scope.enableButton);
+
+						scope.enableButton = function () {
+							element.attr('disabled', false);
+						};
+
+						scope.disableButton = function () {
+							element.attr('disabled', true);
+							console.log('disabled ', element[0].innerText);
+						};
+
+
+						scope.$on('$destroy', function () {
+							angular.forEach(events, function (ev) {
+								if (ev) {
+									ev();
+								}
+							});
+						});
+					}
+				};
+			})
+
 			.directive('usSpinner', ['$window', function ($window) {
 				return {
 					scope: true,

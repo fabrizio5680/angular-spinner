@@ -29,9 +29,12 @@
 			.directive('btn', function () {
 				return {
 					restrict: 'C',
-					link: function postLink(scope, element) {
+					link: function postLink(scope, element, attrs) {
 						var events = [];
 
+						if (attrs.ngDisabled || attrs.noSpinnerDisable) {
+							return;
+						}
 						scope.$on('us-spinner:spin', function (event, key) {
 							element.attr('disabled', true);
 						});

@@ -12,36 +12,37 @@
 		angular
 			.module('angularSpinner', [])
 
-			.provider('usSpinnerService', ['$rootScope', '$timeout', function ($rootScope, $timeout) {
+			.provider('usSpinnerService', function () {
 				var config = {};
 				var timeouts = {};
 
 				config.timeout = 15000;
 
-				config.spin = function (key) {
-					$rootScope.$broadcast('us-spinner:spin', key);
-					timeoutStart(key);
-				};
+				this.$get = ['$rootScope', '$timeout', function ($rootScope, $timeout) {
+					config.spin = function (key) {
+						$rootScope.$broadcast('us-spinner:spin', key);
+						timeoutStart(key);
+					};
 
-				config.stop = function (key) {
-					$rootScope.$broadcast('us-spinner:stop', key);
-					timeoutStop(key);
-				};
+					config.stop = function (key) {
+						$rootScope.$broadcast('us-spinner:stop', key);
+						timeoutStop(key);
+					};
 
-				var timeoutStart = function (key) {
-					timeouts[key] = $timeout(function () {
-						$rootScope.$broadcast('us-spinner:timeout');
-					}, config.timeout);
-				};
+					var timeoutStart = function (key) {
+						timeouts[key] = $timeout(function () {
+							$rootScope.$broadcast('us-spinner:timeout');
+						}, config.timeout);
+					};
 
-				var timeoutStop = function (key) {
-					$timeout.cancel(timeouts[key]);
-				};
+					var timeoutStop = function (key) {
+						$timeout.cancel(timeouts[key]);
+					};
 
-				this.$get = function () {
+
 					return config;
-				};
-			}])
+				}];
+			})
 
 			.directive('btn', function () {
 				return {

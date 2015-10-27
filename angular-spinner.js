@@ -12,15 +12,32 @@
 		angular
 			.module('angularSpinner', [])
 
-			.factory('usSpinnerService', ['$rootScope', function ($rootScope) {
+			.factory('usSpinnerService', ['$rootScope', '$timeout', function ($rootScope, $timeout) {
 				var config = {};
-
+				var spin = null;
+				var timeouts = [];
 				config.spin = function (key) {
 					$rootScope.$broadcast('us-spinner:spin', key);
+					spin = true;
+					timeoutStart();
 				};
 
 				config.stop = function (key) {
 					$rootScope.$broadcast('us-spinner:stop', key);
+					spin = false;
+					timeoutStop();
+				};
+
+				var timeoutStart = function () {
+					timeouts.push($timeout(function () {
+						$rootScope.$broadcast('us-spinner:timeout');
+					}, 15000));
+				};
+
+				var timeoutStop = function () {
+					angular.forEach(timeouts, function (tm) {
+						$timeout.cancel(tm);
+					});
 				};
 
 				return config;
@@ -30,7 +47,6 @@
 				return {
 					restrict: 'C',
 					link: function postLink(scope, element, attrs) {
-						var events = [];
 
 						if (attrs.ngDisabled || attrs.noSpinnerDisable) {
 							return;
@@ -45,11 +61,6 @@
 
 						scope.$on('$destroy', function () {
 							element.attr('disabled', false);
-							angular.forEach(events, function (ev) {
-								if (ev) {
-									ev();
-								}
-							});
 						});
 					}
 				};

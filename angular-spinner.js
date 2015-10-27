@@ -12,35 +12,35 @@
 		angular
 			.module('angularSpinner', [])
 
-			.factory('usSpinnerService', ['$rootScope', '$timeout', function ($rootScope, $timeout) {
+			.provider('usSpinnerService', ['$rootScope', '$timeout', function ($rootScope, $timeout) {
 				var config = {};
-				var spin = null;
-				var timeouts = [];
+				var timeouts = {};
+
+				config.timeout = 15000;
+
 				config.spin = function (key) {
 					$rootScope.$broadcast('us-spinner:spin', key);
-					spin = true;
-					timeoutStart();
+					timeoutStart(key);
 				};
 
 				config.stop = function (key) {
 					$rootScope.$broadcast('us-spinner:stop', key);
-					spin = false;
-					timeoutStop();
+					timeoutStop(key);
 				};
 
-				var timeoutStart = function () {
-					timeouts.push($timeout(function () {
+				var timeoutStart = function (key) {
+					timeouts[key] = $timeout(function () {
 						$rootScope.$broadcast('us-spinner:timeout');
-					}, 15000));
+					}, config.timeout);
 				};
 
-				var timeoutStop = function () {
-					angular.forEach(timeouts, function (tm) {
-						$timeout.cancel(tm);
-					});
+				var timeoutStop = function (key) {
+					$timeout.cancel(timeouts[key]);
 				};
 
-				return config;
+				this.$get = function () {
+					return config;
+				};
 			}])
 
 			.directive('btn', function () {

@@ -16,7 +16,7 @@
 				var config = {};
 				var timeouts = {};
 
-				config.timeout = 15000;
+				var timeout = 15000;
 
 				this.$get = ['$rootScope', '$timeout', function ($rootScope, $timeout) {
 					config.spin = function (key) {
@@ -29,10 +29,14 @@
 						timeoutStop(key);
 					};
 
+					config.setTimeout = function (value) {
+						timeout = value;
+					};
+
 					var timeoutStart = function (key) {
 						timeouts[key] = $timeout(function () {
 							$rootScope.$broadcast('us-spinner:timeout');
-						}, config.timeout);
+						}, timeout);
 					};
 
 					var timeoutStop = function (key) {

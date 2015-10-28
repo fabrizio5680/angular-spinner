@@ -23,9 +23,9 @@
 				};
 
 				this.$get = ['$rootScope', '$timeout', function ($rootScope, $timeout) {
-					config.spin = function (key) {
+					config.spin = function (key, timeout) {
 						$rootScope.$broadcast('us-spinner:spin', key);
-						timeoutStart(key);
+						timeoutStart(key, timeout);
 					};
 
 					config.stop = function (key) {
@@ -34,14 +34,20 @@
 					};
 
 
-					var timeoutStart = function (key) {
+					var timeoutStart = function (key, timeout) {
+						if (!timeout) {
+							return;
+						}
+
 						timeouts[key] = $timeout(function () {
 							$rootScope.$broadcast('us-spinner:timeout');
 						}, timeout);
 					};
 
 					var timeoutStop = function (key) {
-						$timeout.cancel(timeouts[key]);
+						if (timeouts[key]) {
+							$timeout.cancel(timeouts[key]);
+						}
 					};
 
 

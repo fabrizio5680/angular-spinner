@@ -1,6 +1,6 @@
 {
 	"name": "angular-spinner",
-	"version": "1.0.8",
+	"version": "1.0.9",
 	"description": "Angular directive to show an animated spinner (using spin.js)",
 	"main": "./angular-spinner.js",
 	"author": "Uri Shaked",

@@ -16,10 +16,10 @@
 				var config = {};
 				var timeouts = {};
 
-				var timeout = 15000;
+				var defaultTimeout = 15000;
 
 				this.setTimeout = function (value) {
-					timeout = value;
+					defaultTimeout = value;
 				};
 
 				this.$get = ['$rootScope', '$timeout', function ($rootScope, $timeout) {
@@ -41,7 +41,7 @@
 
 						timeouts[key] = $timeout(function () {
 							$rootScope.$broadcast('us-spinner:timeout');
-						}, timeout);
+						}, angular.isNumber(timeout) ? timeout : defaultTimeout);
 					};
 
 					var timeoutStop = function (key) {
@@ -49,8 +49,6 @@
 							$timeout.cancel(timeouts[key]);
 						}
 					};
-
-
 					return config;
 				}];
 			})
